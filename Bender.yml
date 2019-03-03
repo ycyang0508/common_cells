@@ -21,7 +21,7 @@ sources:
   # Level 0
   - src/cdc_2phase.sv
   - src/clk_div.sv
-  - src/counter.sv
+  - src/delta_counter.sv
   - src/edge_propagator_tx.sv
   - src/fifo_v3.sv
   - src/graycode.sv
@@ -44,6 +44,7 @@ sources:
   # Level 1
   - src/cdc_fifo_2phase.sv
   - src/cdc_fifo_gray.sv
+  - src/counter.sv
   - src/edge_detect.sv
   - src/fifo_v2.sv
   - src/id_queue.sv
