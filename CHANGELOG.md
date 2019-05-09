@@ -12,13 +12,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Parametric payload data type for `rr_arb_tree`
+- `stream_arbiter` now always uses round-robin arbitration; its `ARBITER` parameter has been removed.
 
 ### Deprecated
 - The following arbiter implementations are deprecated and superseded by `rr_arb_tree`:
   - Priority arbiter `prioarbiter`
   - Round-robin arbiter `rrarbiter`
-  - Stream arbiter `stream_arbiter`
-  - Flushable stream arbiter `stream_arbiter_flushable`
 
 ### Fixed
 

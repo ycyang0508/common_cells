@@ -11,15 +11,15 @@
 // Stream arbiter: Arbitrates a parametrizable number of input streams (i.e., valid-ready
 // handshaking with dependency rules as in AXI4) to a single output stream.  Once `oup_valid_o` is
 // asserted, `oup_data_o` remains invariant until the output handshake has occurred.  The
-// arbitration scheme is round-robin with "look ahead", see the `rrarbiter` for details.
+// arbitration scheme is fair round-robin tree, see `rr_arb_tree` for details.
 
-module stream_arbiter #(
+module stream_arbiter_flushable #(
     parameter type      DATA_T = logic,   // Vivado requires a default value for type parameters.
-    parameter integer   N_INP = -1,       // Synopsys DC requires a default value for parameters.
-    parameter           ARBITER = "rr"    // "rr" or "prio"
+    parameter integer   N_INP = -1        // Synopsys DC requires a default value for parameters.
 ) (
     input  logic              clk_i,
     input  logic              rst_ni,
+    input  logic              flush_i,
 
     input  DATA_T [N_INP-1:0] inp_data_i,
     input  logic  [N_INP-1:0] inp_valid_i,
@@ -30,20 +30,24 @@ module stream_arbiter #(
     input  logic              oup_ready_i
 );
 
-  stream_arbiter_flushable #(
-    .DATA_T (DATA_T),
-    .N_INP  (N_INP),
-    .ARBITER (ARBITER)
-  ) i_arb (
-    .clk_i        (clk_i),
-    .rst_ni       (rst_ni),
-    .flush_i      (1'b0),
-    .inp_data_i   (inp_data_i),
-    .inp_valid_i  (inp_valid_i),
-    .inp_ready_o  (inp_ready_o),
-    .oup_data_o   (oup_data_o),
-    .oup_valid_o  (oup_valid_o),
-    .oup_ready_i  (oup_ready_i)
+  rr_arb_tree #(
+    .NumIn      (N_INP),
+    .DataType   (DATA_T),
+    .ExtPrio    (1'b0),
+    .AxiVldRdy  (1'b1),
+    .LockIn     (1'b1)
+  ) i_arbiter (
+    .clk_i,
+    .rst_ni,
+    .flush_i,
+    .rr_i   ('0),
+    .req_i  (inp_valid_i),
+    .gnt_o  (inp_ready_o),
+    .data_i (inp_data_i),
+    .gnt_i  (oup_ready_i),
+    .req_o  (oup_valid_o),
+    .data_o (oup_data_o),
+    .idx_o  ()
   );
 
 endmodule
